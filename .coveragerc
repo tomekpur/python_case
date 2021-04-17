@@ -1,0 +1,9 @@
+[run]
+branch = True
+omit =
+    */venv/*
+    conftest.py
+
+[report]
+fail_under = 100
+show_missing = True

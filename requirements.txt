@@ -1,0 +1,4 @@
+bp==0.0.4
+Flask==1.1.2
+pytest==6.2.3
+coverage==5.5
