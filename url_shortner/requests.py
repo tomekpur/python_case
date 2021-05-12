@@ -67,10 +67,12 @@ def stats(shortcode):
     if not retrieved_shortcode:
         response = make_response('Shortcode not found', 404)
     else:
-        response = make_response({
-            'created': retrieved_shortcode[2].isoformat(timespec='milliseconds')+'Z',
-            'lastRedirect': retrieved_shortcode[3].isoformat(timespec='milliseconds')+'Z',
+        data = {
+            'created': retrieved_shortcode[2].isoformat(timespec='milliseconds') + 'Z',
             'redirectCount': retrieved_shortcode[4]
-        }, 200)
+        }
+        if retrieved_shortcode[3]:
+            data['lastRedirect'] = retrieved_shortcode[3].isoformat(timespec='milliseconds') + 'Z'
+        response = make_response(data, 200)
 
     return response
