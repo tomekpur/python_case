@@ -81,21 +81,33 @@ def test_stats(app, client):
 
         # Setup
         insert_shortcode_into_db(get_db(), url, shortcode)
+
+        retreived_shortcode = get_shortcode_from_db(get_db(), shortcode)
+        created_first = retreived_shortcode[2].isoformat(timespec='milliseconds') + 'Z'
+        redirect_count_first = retreived_shortcode[4]
+        valid_stat_request_first = client.get(shortcode + '/stats')
+        valid_stat_json_first = ast.literal_eval(valid_stat_request_first.data.decode('utf-8'))
+
         client.get(shortcode)  # Simulate a redirect request
 
         retreived_shortcode = get_shortcode_from_db(get_db(), shortcode)
-        created = retreived_shortcode[2].isoformat(timespec='milliseconds') + 'Z'
-        last_redirect = retreived_shortcode[3].isoformat(timespec='milliseconds') + 'Z'
-        redirect_count = retreived_shortcode[4]
+        created_second = retreived_shortcode[2].isoformat(timespec='milliseconds') + 'Z'
+        last_redirect_second = retreived_shortcode[3].isoformat(timespec='milliseconds') + 'Z'
+        redirect_count_second = retreived_shortcode[4]
 
-        valid_stat_request = client.get(shortcode + '/stats')
-        valid_stat_json = ast.literal_eval(valid_stat_request.data.decode('utf-8'))
+        valid_stat_request_second = client.get(shortcode + '/stats')
+        valid_stat_json_second = ast.literal_eval(valid_stat_request_second.data.decode('utf-8'))
 
         invalid_stat_request = client.get('non-existing-shortcode/stats')
 
         # Assertions
-        assert valid_stat_request.status_code == 200
-        assert valid_stat_json == {'created': created, 'lastRedirect': last_redirect, 'redirectCount': redirect_count}
+        assert valid_stat_request_first.status_code == 200
+        assert valid_stat_json_first == \
+               {'created': created_first, 'redirectCount': redirect_count_first}
+
+        assert valid_stat_request_second.status_code == 200
+        assert valid_stat_json_second == \
+               {'created': created_second, 'lastRedirect': last_redirect_second, 'redirectCount': redirect_count_second}
 
         assert invalid_stat_request.status_code == 404
         assert invalid_stat_request.data == b'Shortcode not found'
