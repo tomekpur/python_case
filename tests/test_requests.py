@@ -82,18 +82,18 @@ def test_stats(app, client):
         # Setup
         insert_shortcode_into_db(get_db(), url, shortcode)
 
-        retreived_shortcode = get_shortcode_from_db(get_db(), shortcode)
-        created_first = retreived_shortcode[2].isoformat(timespec='milliseconds') + 'Z'
-        redirect_count_first = retreived_shortcode[4]
+        retrieved_shortcode = get_shortcode_from_db(get_db(), shortcode)
+        created_first = retrieved_shortcode[2].isoformat(timespec='milliseconds') + 'Z'
+        redirect_count_first = retrieved_shortcode[4]
         valid_stat_request_first = client.get(shortcode + '/stats')
         valid_stat_json_first = ast.literal_eval(valid_stat_request_first.data.decode('utf-8'))
 
         client.get(shortcode)  # Simulate a redirect request
 
-        retreived_shortcode = get_shortcode_from_db(get_db(), shortcode)
-        created_second = retreived_shortcode[2].isoformat(timespec='milliseconds') + 'Z'
-        last_redirect_second = retreived_shortcode[3].isoformat(timespec='milliseconds') + 'Z'
-        redirect_count_second = retreived_shortcode[4]
+        retrieved_shortcode = get_shortcode_from_db(get_db(), shortcode)
+        created_second = retrieved_shortcode[2].isoformat(timespec='milliseconds') + 'Z'
+        last_redirect_second = retrieved_shortcode[3].isoformat(timespec='milliseconds') + 'Z'
+        redirect_count_second = retrieved_shortcode[4]
 
         valid_stat_request_second = client.get(shortcode + '/stats')
         valid_stat_json_second = ast.literal_eval(valid_stat_request_second.data.decode('utf-8'))
