@@ -6,16 +6,16 @@ import re
 
 def validated_shortcode_insert(db, url, shortcode):
     """ Validates the entered shortcode and inserts into db if valid"""
-    if not re.match(r'^[a-zA-Z0-9_]*$', shortcode):
+    if not shortcode:
+        shortcode = generate_shortcode(db)
+        return insert_shortcode_into_db(db, url, shortcode)
+    elif not re.match(r'^[a-zA-Z0-9_]{6,255}$', shortcode):
         return 412, 'The provided shortcode is invalid'
     else:
         db_shortcode = get_shortcode_from_db(db, shortcode)
 
         if db_shortcode:
             return 409, 'Shortcode already in use'
-        elif not shortcode:
-            shortcode = generate_shortcode(db)
-            return insert_shortcode_into_db(db, url, shortcode)
         else:
             return insert_shortcode_into_db(db, url, shortcode)
 
